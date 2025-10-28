@@ -3,7 +3,7 @@
 # dependencies
 node_modules/
 assets/
-constants/
+
 
 # Expo
 .expo/
