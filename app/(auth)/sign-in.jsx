@@ -7,18 +7,20 @@ import FloatingBox from "../components/floating-box";
 import CustomButton from "../components/CustomButton";
 import { Button } from "react-native-web";
 import FormField from "../components/FormField";
+import { useSubmitHandler } from "./handleSubmit";
 
-const SignIn = () => {
-  const [form, setForm] = useState({email:"", password:""})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+
+ const SignIn = () => {
+   const [form, setForm] = useState({email:"", password:""})
+   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const router = useRouter()
 
-  const submit= () =>{
-    console.log("ckikc")
-    router.replace("../home")
-  }
-  
+//   const submit= () =>{
+//     router.replace("../home")
+//   }
+  const { handleSubmit } = useSubmitHandler();
 
   return (
     <SafeAreaView className="flex-1">
@@ -48,8 +50,8 @@ const SignIn = () => {
               handleChangeText = {(e)=>setForm({...form, password:e})}
               otherStyles="mt-7"
             />
-            <CustomButton title='Login' handlePress={submit} containerStyles="mt-20" isLoading={isSubmitting}/>
-            <CustomButton title='Login With Google'  handlePress={submit} containerStyles="mt-5" isLoading={isSubmitting} />
+            <CustomButton title='Login' handlePress={handleSubmit} containerStyles="mt-20" isLoading={isSubmitting}/>
+            <CustomButton title='Login With Google'  handlePress={handleSubmit} containerStyles="mt-5" isLoading={isSubmitting} />
 
             <View className="justify-center pt-2 flex-row gap-2">
               <Text className="text-primary font-pregular ">Don't have an account?</Text>
