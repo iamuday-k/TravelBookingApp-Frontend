@@ -1,5 +1,6 @@
 import home from "../assets/icons/home.png";
-import mdi_eye from "../assets/icons/mdi_eye.png";
+import eyeopen from "../assets/icons/eye-open.png";
+import eyeclose from "../assets/icons/eye-close.png";
 import menu from "../assets/icons/menu.png";
 import next_arrow from "../assets/icons/next-arrow.png";
 import profile from "../assets/icons/profile.png";
@@ -12,8 +13,9 @@ import trips from "../assets/icons/trips.png";
 import wishlist from "../assets/icons/wishlist.png";
 
 export default {
+  eyeclose,
   home,
-  mdi_eye,
+  eyeopen,
   menu,
   next_arrow,
   profile,

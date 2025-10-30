@@ -1,51 +1,92 @@
-import { View,Image, Text, ImageBackground } from "react-native";
-import { Tabs, Redirect } from "expo-router";
-import {icons} from "../../constants";
-import { colorScheme } from "nativewind";
+import { Tabs } from 'expo-router';
+import { Image } from 'react-native';
+import { icons } from '../../constants';
 
-const TabIcon = ({ icon, color, name, focused }) => {
+export default function TabLayout() {
   return (
-    <View className="align-center">
-      <Image
-        source={icon}
-        resizeMode="contain"
-        tintColor={color}
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: '#FAD47B', // Using your Gold color
+        tabBarInactiveTintColor: '#FFFFFF',
+        tabBarStyle: {
+          backgroundColor: '#081828',
+          borderTopWidth: 0,
+          height: 80,
+          paddingTop: 8,
+          paddingBottom: 20,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontFamily: 'Poppins-Medium', // Using your custom font
+        },
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
+              source={icons.home}
+              className={`w-6 h-6 ${focused ? 'shadow-lg shadow-Gold' : ''}`}
+              style={{ tintColor: color }}
+            />
+          ),
+        }}
       />
-      <Text
-        className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
-        style={{ color: color }}
-      >
-        {name}
-      </Text>
-    </View>
+      <Tabs.Screen
+        name="wishlist"
+        options={{
+          title: 'Wishlist',
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
+              source={icons.wishlist}
+              className={`w-6 h-6 ${focused ? 'shadow-lg shadow-Gold' : ''}`}
+              style={{ tintColor: color }}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="rewards"
+        options={{
+          title: 'Rewards',
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
+              source={icons.rewards}
+              className={`w-6 h-6 ${focused ? 'shadow-lg shadow-Gold' : ''}`}
+              style={{ tintColor: color }}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="trips"
+        options={{
+          title: 'Trips',
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
+              source={icons.trips}
+              className={`w-6 h-6 ${focused ? 'shadow-lg shadow-Gold' : ''}`}
+              style={{ tintColor: color }}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
+              source={icons.profile}
+              className={`w-6 h-6 ${focused ? 'shadow-lg shadow-Gold' : ''}`}
+              style={{ tintColor: color }}
+            />
+          ),
+        }}
+      />
+    </Tabs>
   );
-};
-
-const TabsLayout = () => {
-  return (
-    <>
-      <Tabs screenOptions={{tabBarShowLabel:false}}>
-        <Tabs.Screen 
-          name="home"
-          options={{ 
-            title: "Home",
-            headerShown: false, 
-            
-            tabBarIcon:({focused, color, name, icon}) =>(
-            <>
-              <Image 
-              source={icon}
-              resizeMode="contain"
-              tintColor={color}
-              />
-              <Text>Home</Text>
-            </>
-            )
-          }}
-          />
-      </Tabs>
-    </>
-  );
-};
-
-export default TabsLayout;
+}
