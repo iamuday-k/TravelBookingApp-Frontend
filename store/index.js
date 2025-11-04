@@ -1,13 +1,22 @@
+// store/index.js - Updated with agency reducer
 import { configureStore } from '@reduxjs/toolkit';
 import homeReducer from './slices/homeSlice';
+import agencyReducer from './slices/agencySlice';
+import wishlistReducer from './slices/wishListSlice';
+import profileReducer from './slices/profileSlice';
+import tripsReducer from './slices/tripsSlice'
 
 const store = configureStore({
   reducer: {
-    home: homeReducer
+    home: homeReducer,
+    agency: agencyReducer,
+    wishlist: wishlistReducer,
+    profile: profileReducer,
+    trips: tripsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false
+      serializableCheck: false,
     }),
   preloadedState: {
     home: {
@@ -18,15 +27,29 @@ const store = configureStore({
         elite: [],
         premium: [],
         verified: [],
-        welcomeGift: []
+        welcomeGift: [],
       },
       promotions: [],
       spiritualDestinations: [],
       popularDestinations: [],
       testimonials: [],
-      pagination: { total: 0, page: 1 }
-    }
-  }
+      pagination: { total: 0, page: 1 },
+    },
+    agency: {
+      agencies: [],
+      filteredAgencies: [],
+      selectedLocation: 'All',
+      wishlist: [],
+      loading: false,
+      error: null,
+      pagination: {
+        total: 0,
+        page: 1,
+        limit: 10,
+      },
+      currentTier: null,
+    },
+  },
 });
 
 // Debug store state

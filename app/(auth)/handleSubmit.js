@@ -8,13 +8,13 @@ export const useSubmitHandler = () => {
 
   const handleSubmit = async () => {
     try {
-      // 1️⃣ Start data fetching before navigation
+      // 1️ Start data fetching before navigation
       const result = await dispatch(fetchHomeData()).unwrap();
 
-      // 2️⃣ Once data is fetched, navigate to home
+      // 2️ Once data is fetched, navigate to home
       router.replace("../home");
     } catch (error) {
-      console.error("❌ Failed to fetch home data:", error);
+      console.error("Failed to fetch home data:", error);
       // optionally show a toast or alert
     }
   };

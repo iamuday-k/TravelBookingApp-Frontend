@@ -4,12 +4,40 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 const AgencyCard = ({ agency, type, image }) => {
-  const handlePress = () => {
-    log('Agency presseconsole.d:', agency.id);
+  // Map type directly to tier (only for elite, premium, verified)
+  const getTierFromType = (type) => {
+    if (type === 'elite') return 'elite';
+    if (type === 'premium') return 'premium';
+    if (type === 'verified') return 'verified';
+    return null; // Don't navigate for other types like welcomeGift
   };
 
-  const handleWishlist = () => {
-    console.log('Wishlist pressed:', agency.id);
+  const handlePress = () => {
+    const tier = getTierFromType(type);
+    
+    if (tier) {
+      console.log('Agency pressed:', agency.id, '-> Navigating to tier:', tier);
+      router.push({
+        pathname: '/agencies',
+        params: { tier }
+      });
+    } else {
+      console.log('Agency pressed:', agency.id, '-> No navigation (type:', type, ')');
+    }
+  };
+
+  const handleViewPackages = () => {
+    const tier = getTierFromType(type);
+    
+    if (tier) {
+      console.log('View Packages pressed:', agency.id, '-> Navigating to tier:', tier);
+      router.push({
+        pathname: '/agencies',
+        params: { tier }
+      });
+    } else {
+      console.log('View Packages pressed:', agency.id, '-> No navigation (type:', type, ')');
+    }
   };
 
   const getBadgeConfig = () => {
@@ -39,9 +67,6 @@ const AgencyCard = ({ agency, type, image }) => {
   const badge = getBadgeConfig();
   const button = getButtonConfig();
 
-  console.log("************************");
-  console.log(image);
-  console.log("***********************");
   return (
     <TouchableOpacity
       onPress={handlePress}
@@ -59,12 +84,6 @@ const AgencyCard = ({ agency, type, image }) => {
             <Text className={`${badge.textColor} font-semibold text-xs`}>{badge.text}</Text>
           </View>
         )}
-        <TouchableOpacity
-          onPress={handleWishlist}
-          className="absolute top-3 right-3 bg-white/90 p-2 rounded-full"
-        >
-          <Feather name="heart" size={18} color="#EF4444" />
-        </TouchableOpacity>
       </View>
       
       <View className="p-4">
@@ -90,7 +109,10 @@ const AgencyCard = ({ agency, type, image }) => {
           ))}
         </View>
 
-        <TouchableOpacity className={`${button.bg} mt-3 py-3 rounded-lg items-center`}>
+        <TouchableOpacity 
+          onPress={handleViewPackages}
+          className={`${button.bg} mt-3 py-3 rounded-lg items-center`}
+        >
           <Text className={`${button.text} font-semibold`}>View Packages</Text>
         </TouchableOpacity>
       </View>

@@ -20,9 +20,9 @@ const AgencySection = ({ title, agencies, type }) => {
   };
 
   return (
-    <View className="mt-6">
-      <View className="flex-row justify-between items-center px-4 mb-3">
-        <Text className={`${getTitleColor()} font-bold text-lg uppercase tracking-wider`}>
+    <View className="mt-6 ">
+      <View className="flex-row justify-between items-center px-5 mb-3">
+        <Text className={`${getTitleColor()} font-pbold text-lg uppercase tracking-wider`}>
           {title}
         </Text>
         <TouchableOpacity className="flex-row items-center">

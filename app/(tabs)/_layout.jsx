@@ -6,7 +6,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#FAD47B', // Using your Gold color
+        tabBarActiveTintColor: '#FAD47B', 
         tabBarInactiveTintColor: '#FFFFFF',
         tabBarStyle: {
           backgroundColor: '#081828',
@@ -17,7 +17,7 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontFamily: 'Poppins-Medium', // Using your custom font
+          fontFamily: 'Poppins-Medium', 
         },
         headerShown: false,
       }}

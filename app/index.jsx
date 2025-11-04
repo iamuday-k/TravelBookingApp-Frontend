@@ -21,7 +21,7 @@ const onboardingData = [
     image: images.onboard2,
     title: 'Compare',
     subtitle: '1000+ Packages in One Place.',
-    quote: '✓ Elite, Premium, and Verified options.',
+    quote: 'Elite, Premium, and\n Verified options.',
     buttonText: 'Next'
   },
   {
@@ -131,15 +131,16 @@ export default function Index() {
             className="flex-1"
             resizeMode="cover"
           >
+            <View className="bg-black"/>
             <View className="flex-1 justify-between pt-20 pb-6 px-6 color-overlay">
               {/* Top Content */}
               <View style={{ marginTop: 40 }}>
-                <TextShadow className="text-white font-pextrabold text-4xl leading-normal text-center">{item.title}</TextShadow>
+                <TextShadow className="text-[#E9FFE0] font-pextrabold text-4xl leading-normal text-center">{item.title}</TextShadow>
                 <Text className="text-white font-pregular text-lg text-center my-5">
                   {item.subtitle}
                 </Text>
                 <Text
-                  className="text-white font-pbold text-3xl text-center leading-10"
+                  className="text-white font-pbold text-2xl text-center leading-10"
                   style={{
                     textShadowColor: 'rgba(0,0,0,0.)',
                     textShadowOffset: { width: 0, height: 2 },

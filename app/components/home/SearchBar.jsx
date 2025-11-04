@@ -12,9 +12,9 @@ const SearchBar = () => {
     <TouchableOpacity 
       onPress={handleSearchPress}
       activeOpacity={0.7}
-      className="mx-4 mt-4"
+      className="mx-3 mt-3"
     >
-      <View className="flex-row items-center bg-white rounded-full px-4 py-3 shadow-sm">
+      <View className="flex-row items-center  bg-white rounded-xl px-3  h-11 shadow-sm">
         <Feather name="search" size={20} color="#9CA3AF" />
         <TextInput
           placeholder="Where to go"
