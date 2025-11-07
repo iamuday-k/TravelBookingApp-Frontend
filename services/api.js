@@ -770,3 +770,610 @@ export const tripsAPI = {
     return response.data;
   }
 };
+
+// ##################################################################################################################################
+const mockSearchData = {
+  pagination: {
+    total: 50,
+    page: 1
+  },
+  trips: [
+    {
+      id: 'trip_1',
+      details: {
+        id: 'trip_1',
+        name: 'Pinnacle Journeys',
+        location: 'Switzerland',
+        price: 3200,
+        rating: 4.5,
+        image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+        tier: 'elite',
+        days: 5
+      }
+    },
+    {
+      id: 'trip_2',
+      details: {
+        id: 'trip_2',
+        name: 'Golden Oasis',
+        location: 'Dubai',
+        price: 4000,
+        rating: 5,
+        image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800',
+        tier: 'premium',
+        days: 7
+      }
+    },
+    {
+      id: 'trip_3',
+      details: {
+        id: 'trip_3',
+        name: 'Alpine Adventure',
+        location: 'Austria',
+        price: 2800,
+        rating: 4,
+        image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+        tier: 'verified',
+        days: 4
+      }
+    },
+    {
+      id: 'trip_4',
+      details: {
+        id: 'trip_4',
+        name: 'Tropical Paradise',
+        location: 'Maldives',
+        price: 5500,
+        rating: 5,
+        image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800',
+        tier: 'elite',
+        days: 6
+      }
+    },
+    {
+      id: 'trip_5',
+      details: {
+        id: 'trip_5',
+        name: 'Desert Dreams',
+        location: 'Morocco',
+        price: 1800,
+        rating: 4,
+        image: 'https://images.unsplash.com/photo-1539768942893-daf53e448371?w=800',
+        tier: 'premium',
+        days: 3
+      }
+    },
+    {
+      id: 'trip_6',
+      details: {
+        id: 'trip_6',
+        name: 'Island Escape',
+        location: 'Bali',
+        price: 2200,
+        rating: 4.5,
+        image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800',
+        tier: 'verified',
+        days: 5
+      }
+    }
+  ],
+  relevantAgencies: {
+    elite: [
+      {
+        id: 'agency_elite_1',
+        name: 'Prestige Travels, Munnar',
+        location: 'Munnar, Kerala',
+        price: 149999,
+        rating: 5,
+        image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',
+        tier: 'elite'
+      },
+      {
+        id: 'agency_elite_2',
+        name: 'Luxury Expeditions',
+        location: 'Goa',
+        price: 129999,
+        rating: 5,
+        image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+        tier: 'elite'
+      }
+    ],
+    premium: [
+      {
+        id: 'agency_premium_1',
+        name: 'Premium Wanderlust',
+        location: 'Jaipur, Rajasthan',
+        price: 89999,
+        rating: 4.5,
+        image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800',
+        tier: 'premium'
+      },
+      {
+        id: 'agency_premium_2',
+        name: 'Elite Getaways',
+        location: 'Udaipur, Rajasthan',
+        price: 99999,
+        rating: 4.5,
+        image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800',
+        tier: 'premium'
+      }
+    ],
+    verified: [
+      {
+        id: 'agency_verified_1',
+        name: 'Verified Adventures',
+        location: 'Manali, Himachal',
+        price: 59999,
+        rating: 4,
+        image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+        tier: 'verified'
+      },
+      {
+        id: 'agency_verified_2',
+        name: 'Trust Travel Co',
+        location: 'Shimla, Himachal',
+        price: 49999,
+        rating: 4,
+        image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800',
+        tier: 'verified'
+      }
+    ]
+  }
+};
+
+export const searchAPI = {
+  searchTrips: async ({ q, minPrice, maxPrice, minDays, maxDays, minHotelRating }) => {
+    if (USE_MOCK_DATA) {
+      console.log('Search API called with params:', {
+        q,
+        minPrice,
+        maxPrice,
+        minDays,
+        maxDays,
+        minHotelRating
+      });
+      
+      await new Promise(r => setTimeout(r, 800));
+      
+      // Filter mock data based on params
+      let filteredTrips = [...mockSearchData.trips];
+      let filteredAgencies = { ...mockSearchData.relevantAgencies };
+      
+      if (q) {
+        filteredTrips = filteredTrips.filter(trip =>
+          trip.details.name.toLowerCase().includes(q.toLowerCase()) ||
+          trip.details.location.toLowerCase().includes(q.toLowerCase())
+        );
+      }
+      
+      if (minPrice !== undefined && maxPrice !== undefined) {
+        filteredTrips = filteredTrips.filter(trip =>
+          trip.details.price >= minPrice && trip.details.price <= maxPrice
+        );
+        
+        Object.keys(filteredAgencies).forEach(tier => {
+          filteredAgencies[tier] = filteredAgencies[tier].filter(agency =>
+            agency.price >= minPrice && agency.price <= maxPrice
+          );
+        });
+      }
+      
+      if (minDays !== undefined && maxDays !== undefined) {
+        filteredTrips = filteredTrips.filter(trip =>
+          trip.details.days >= minDays && trip.details.days <= maxDays
+        );
+      }
+      
+      if (minHotelRating !== undefined) {
+        filteredTrips = filteredTrips.filter(trip =>
+          trip.details.rating >= minHotelRating
+        );
+        
+        Object.keys(filteredAgencies).forEach(tier => {
+          filteredAgencies[tier] = filteredAgencies[tier].filter(agency =>
+            agency.rating >= minHotelRating
+          );
+        });
+      }
+      
+      return {
+        success: true,
+        data: {
+          pagination: {
+            total: filteredTrips.length,
+            page: 1
+          },
+          trips: filteredTrips,
+          relevantAgencies: filteredAgencies
+        }
+      };
+    }
+    
+    // Real API call
+    const response = await apiClient.get('/search', {
+      params: { q, minPrice, maxPrice, minDays, maxDays, minHotelRating }
+    });
+    return response.data;
+  }
+};
+
+// ############################################################################################
+
+const mockPackagesData = {
+  pagination: {
+    total: 15,
+    page: 1,
+    totalPages: 2
+  },
+  packages: [
+    {
+      packageId: "pkg-001",
+      name: "Maldives Bliss",
+      category: "popular",
+      description: "Tropical in paradise",
+      price: 85000,
+      currency: "INR",
+      duration: "5 days",
+      rating: 4.8,
+      reviews: 120,
+      image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800",
+      location: "Maldives",
+      status: "active",
+      featured: true
+    },
+    {
+      packageId: "pkg-002",
+      name: "Alpine Retreat",
+      category: "popular",
+      description: "Ski in style",
+      price: 95000,
+      currency: "INR",
+      duration: "6 days",
+      rating: 4.9,
+      reviews: 95,
+      image: "https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800",
+      location: "Swiss Alps",
+      status: "active",
+      featured: true
+    },
+    {
+      packageId: "pkg-003",
+      name: "GOA",
+      category: "domestic",
+      description: "Explore GOA",
+      price: 52000,
+      currency: "INR",
+      duration: "4 days",
+      rating: 4.6,
+      reviews: 180,
+      image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800",
+      location: "Goa, India",
+      status: "active",
+      featured: false
+    },
+    {
+      packageId: "pkg-004",
+      name: "Kerala Backwaters",
+      category: "domestic",
+      description: "Cruise through serene backwaters",
+      price: 48000,
+      currency: "INR",
+      duration: "5 days",
+      rating: 4.7,
+      reviews: 145,
+      image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800",
+      location: "Kerala, India",
+      status: "active",
+      featured: false
+    },
+    {
+      packageId: "pkg-005",
+      name: "Maldives Bliss",
+      category: "international",
+      description: "Unwind in luxury",
+      price: 120000,
+      currency: "INR",
+      duration: "7 days",
+      rating: 4.9,
+      reviews: 230,
+      image: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800",
+      location: "Maldives",
+      status: "active",
+      featured: false
+    },
+    {
+      packageId: "pkg-006",
+      name: "Alpine Retreat",
+      category: "international",
+      description: "Mountain adventure",
+      price: 145000,
+      currency: "INR",
+      duration: "8 days",
+      rating: 4.8,
+      reviews: 167,
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
+      location: "Switzerland",
+      status: "active",
+      featured: false
+    },
+    {
+      packageId: "pkg-007",
+      name: "Caribbean Hideaway",
+      category: "international",
+      description: "Escape to tranquility",
+      price: 135000,
+      currency: "INR",
+      duration: "6 days",
+      rating: 4.7,
+      reviews: 198,
+      image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
+      location: "Caribbean",
+      status: "active",
+      featured: false
+    }
+  ]
+};
+
+export const packagesAPI = {
+  getAllPackages: async (params = {}) => {
+    console.log('📦 Fetching packages with params:', params);
+    if (USE_MOCK_DATA) {
+      await new Promise(r => setTimeout(r, 800));
+      
+      let filteredPackages = [...mockPackagesData.packages];
+      
+      // Filter by category if provided
+      if (params.category && params.category !== 'all') {
+        filteredPackages = filteredPackages.filter(
+          pkg => pkg.category === params.category
+        );
+      }
+      
+      return {
+        success: true,
+        data: {
+          pagination: {
+            total: filteredPackages.length,
+            page: params.page || 1,
+            totalPages: Math.ceil(filteredPackages.length / 10)
+          },
+          packages: filteredPackages
+        }
+      };
+    }
+    const response = await apiClient.get('/packages', { params });
+    return response.data;
+  },
+
+  getPackageById: async (packageId) => {
+    console.log('📦 Fetching package:', packageId);
+    if (USE_MOCK_DATA) {
+      await new Promise(r => setTimeout(r, 500));
+      const pkg = mockPackagesData.packages.find(p => p.packageId === packageId);
+      return { success: true, data: pkg };
+    }
+    const response = await apiClient.get(`/packages/${packageId}`);
+    return response.data;
+  }
+};
+
+// ##########################################################################################################################################
+const mockPackageDetailsData = {
+  packageId: "pkg-003",
+  name: "GOA",
+  location: "Goa, India",
+  description: "Luxury Resort",
+  tagline: "BAREFOOT BLISS",
+  headerImage: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
+  packages: [
+    {
+      id: "goa-pkg-1",
+      name: "Goa Luxury Package 1",
+      rating: 5,
+      ratingText: "5-star hotel",
+      price: 1200,
+      pricePerPerson: true,
+      currency: "USD",
+      image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800",
+      duration: "3 days",
+      included: ["Breakfast", "Airport Transfer", "Spa Access"]
+    },
+    {
+      id: "goa-pkg-2",
+      name: "Goa Luxury Package 1",
+      rating: 5,
+      ratingText: "5-star hotel",
+      price: 1500,
+      pricePerPerson: true,
+      currency: "USD",
+      image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800",
+      duration: "5 days",
+      included: ["All Meals", "Airport Transfer", "Pool Access", "Spa"]
+    },
+    {
+      id: "goa-pkg-3",
+      name: "W Goa",
+      rating: 5,
+      ratingText: "5-star hotel",
+      price: 1800,
+      pricePerPerson: true,
+      currency: "USD",
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+      duration: "7 days",
+      included: ["Luxury Suite", "All Inclusive", "Private Beach", "Spa"]
+    }
+  ],
+  experiences: [
+    { id: "exp-1", name: "Private Beach Access", icon: "umbrella" },
+    { id: "exp-2", name: "Spa Treatment", icon: "heart" },
+    { id: "exp-3", name: "Gourmet Dining", icon: "coffee" }
+  ],
+  filters: {
+    duration: ["3 Days", "5 Days", "7 Days"],
+    rating: ["5 Stars", "4 Stars"],
+    priceRange: ["$1,000 - $2,000", "$2,000 - $3,000"],
+    packageType: ["All Packages", "Luxury", "Premium"]
+  }
+};
+
+export const packageDetailsAPI = {
+  getPackageDetails: async (packageId) => {
+    console.log('📦 Fetching package details for:', packageId);
+    if (USE_MOCK_DATA) {
+      await new Promise(r => setTimeout(r, 800));
+      
+      // Customize mock data based on packageId
+      const customData = { ...mockPackageDetailsData };
+      
+      // Find package from main packages list
+      const mainPackage = mockPackagesData.packages.find(p => p.packageId === packageId);
+      if (mainPackage) {
+        customData.name = mainPackage.location || mainPackage.name;
+        customData.location = mainPackage.location;
+        customData.headerImage = mainPackage.image;
+      }
+      
+      return { success: true, data: customData };
+    }
+    const response = await apiClient.get(`/packages/${packageId}/details`);
+    return response.data;
+  }
+};
+
+
+// #########################################################################################################################################################3
+
+
+const mockItineraryData = {
+  packageId: "goa-pkg-1",
+  title: "Trip Overview",
+  destination: "Paris",
+  description: "Experience the allure of Paris with a curated journey through its iconic landmarks and hidden gems. Indulge in gourmet dining, explore world-class museums, and stroll through charming streets to create unforgettable memories in the City of Lights.",
+  headerImage: "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=800",
+  rating: 4.8,
+  totalReviews: 120,
+  ratingBreakdown: [
+    { stars: 5, percentage: 100 },
+    { stars: 4, percentage: 50 },
+    { stars: 3, percentage: 30 },
+    { stars: 2, percentage: 10 },
+    { stars: 1, percentage: 5 }
+  ],
+  inclusions: [
+    { category: "Accommodation", items: [{ name: "Luxury Hotel", included: true }] },
+    { category: "Meals", items: [{ name: "Breakfast Included", included: true }] },
+    { category: "Activities", items: [{ name: "Guided Tours", included: true }] },
+    { category: "Transport", items: [{ name: "Private Car", included: true }] },
+    { category: "Flights", items: [{ name: "Not Included", included: false }] },
+    { category: "Insurance", items: [{ name: "Not Included", included: false }] },
+    { category: "Personal Expenses", items: [{ name: "Not Included", included: false }] },
+    { category: "Gratuities", items: [{ name: "Not Included", included: false }] }
+  ],
+  itinerary: [
+    {
+      day: 1,
+      title: "Arrival & Eiffel Tower",
+      description: "Check in, explore local cafes, and enjoy a breathtaking view from the Eiffel Tower.",
+      icon: "map-pin"
+    },
+    {
+      day: 2,
+      title: "Louvre & Seine Cruise",
+      description: "Visit the Louvre Museum, take a relaxing cruise on the Seine, and savor a gourmet dinner.",
+      icon: "map-pin"
+    },
+    {
+      day: 3,
+      title: "Departure",
+      description: "Enjoy a final Parisian breakfast before departing from the city.",
+      icon: "map-pin"
+    }
+  ],
+  price: 490,
+  currency: "USD",
+  gallery: [
+    { id: 1, image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400" },
+    { id: 2, image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400" },
+    { id: 3, image: "https://images.unsplash.com/photo-1431274172761-fca41d930114?w=400" },
+    { id: 4, image: "https://images.unsplash.com/photo-1500039436846-25ae2f11882e?w=400" }
+  ]
+};
+
+export const itineraryAPI = {
+  getItinerary: async (packageId) => {
+    console.log('📋 Fetching itinerary for:', packageId);
+    if (USE_MOCK_DATA) {
+      await new Promise(r => setTimeout(r, 800));
+      
+      const customData = { ...mockItineraryData };
+      customData.packageId = packageId;
+      
+      return { success: true, data: customData };
+    }
+    const response = await apiClient.get(`/packages/${packageId}/itinerary`);
+    return response.data;
+  }
+};
+
+
+
+// Add this to your existing services/api.js
+
+const mockBookingData = {
+  packageId: "goa-pkg-1",
+  packageName: "Parisian Getaway",
+  location: "Paris, France",
+  duration: "5 nights",
+  headerImage: "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=800",
+  accommodations: [
+    {
+      id: "acc-1",
+      name: "Villa Serenity",
+      type: "4 Bedrooms, Sleeps 8",
+      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400",
+      pricePerNight: 2000
+    },
+    {
+      id: "acc-2",
+      name: "Ocean View Suite",
+      type: "2 Bedrooms, Sleeps 4",
+      image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400",
+      pricePerNight: 1200
+    }
+  ],
+  paymentMethods: [
+    { id: "card-1", type: "MasterCard", last4: "4242", icon: "credit-card" },
+    { id: "card-2", type: "Visa", last4: "1234", icon: "credit-card" },
+    { id: "paypal", type: "Paypal", last4: "", icon: "dollar-sign" }
+  ]
+};
+
+export const bookingAPI = {
+  getBookingDetails: async (packageId) => {
+    console.log('🎫 Fetching booking details for:', packageId);
+    if (USE_MOCK_DATA) {
+      await new Promise(r => setTimeout(r, 800));
+      return { success: true, data: mockBookingData };
+    }
+    const response = await apiClient.get(`/packages/${packageId}/booking`);
+    return response.data;
+  },
+
+  createBooking: async (bookingData) => {
+    console.log('📝 Creating booking:', bookingData);
+    if (USE_MOCK_DATA) {
+      await new Promise(r => setTimeout(r, 1000));
+      return {
+        success: true,
+        data: {
+          bookingId: "BK-" + Date.now(),
+          status: "confirmed",
+          ...bookingData,
+          confirmationNumber: "CONF-" + Math.random().toString(36).substr(2, 9).toUpperCase()
+        }
+      };
+    }
+    const response = await apiClient.post('/bookings', bookingData);
+    return response.data;
+  }
+};

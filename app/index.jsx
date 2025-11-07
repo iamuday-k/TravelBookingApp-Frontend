@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ImageBackground, Dimensions, FlatList, Image, StatusBar } from 'react-native';
 import { images, icons } from '../constants';
 import { useRouter } from 'expo-router';

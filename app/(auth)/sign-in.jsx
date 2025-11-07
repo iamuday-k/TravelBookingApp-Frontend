@@ -1,11 +1,11 @@
 import { View, Text, ImageBackground } from "react-native";
 import {Link, useRouter} from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import FloatingBox from "../components/floating-box";
 import CustomButton from "../components/CustomButton";
-import { Button } from "react-native-web";
+
 import FormField from "../components/FormField";
 import { useSubmitHandler } from "./handleSubmit";
 

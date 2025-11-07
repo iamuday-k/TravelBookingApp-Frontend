@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';

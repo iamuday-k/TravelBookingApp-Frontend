@@ -4,7 +4,13 @@ import homeReducer from './slices/homeSlice';
 import agencyReducer from './slices/agencySlice';
 import wishlistReducer from './slices/wishListSlice';
 import profileReducer from './slices/profileSlice';
-import tripsReducer from './slices/tripsSlice'
+import tripsReducer from './slices/tripsSlice';
+import searchReducer from './slices/searchSlice';
+import packagesReducer from './slices/packageSlice';
+import packageDetailsReducer from './slices/packageDetailsSlice';
+import itineraryReducer from './slices/itinerarySlice';
+import bookingReducer from './slices/bookingSlice';
+
 
 const store = configureStore({
   reducer: {
@@ -13,6 +19,11 @@ const store = configureStore({
     wishlist: wishlistReducer,
     profile: profileReducer,
     trips: tripsReducer,
+    search: searchReducer,
+    packages: packagesReducer,
+    packageDetails: packageDetailsReducer,
+    itinerary: itineraryReducer,
+    booking: bookingReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

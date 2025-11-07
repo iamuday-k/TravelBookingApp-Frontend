@@ -1,29 +1,115 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+// app/(search)/search.jsx
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
-import { Feather } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
+import { useSearch } from '../../hooks/useSearch';
+import SearchHeader from '../components/search/SearchHeader';
+import SearchFilters from '../components/search/SearchFilters';
+import SearchResults from '../components/search/SearchResults';
 
-const Search = () => {
+const SearchPage = () => {
+  const [showFilters, setShowFilters] = useState(true);
+  const {
+    trips,
+    relevantAgencies,
+    loading,
+    filters,
+    updateFilters,
+    performSearch
+  } = useSearch();
+
+  const handleSearchChange = (text) => {
+    console.log('Search query changed:', text);
+    updateFilters({ q: text });
+  };
+
+  const handleFiltersChange = (newFilters) => {
+    console.log('Filters changed:', newFilters);
+    updateFilters(newFilters);
+  };
+
+  const handleShowResults = () => {
+    console.log('Show results pressed with filters:', filters);
+    
+    // Prepare search params
+    const searchParams = {
+      q: filters.q,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+      minDays: filters.minDays,
+      maxDays: filters.maxDays,
+      minHotelRating: filters.minHotelRating
+    };
+
+    console.log('Performing search with params:', searchParams);
+    performSearch(searchParams);
+    setShowFilters(false);
+  };
+
+  const handleTripPress = (tripId) => {
+    console.log('Trip pressed:', tripId);
+    // router.push(`/trip/${tripId}`);
+  };
+
+  const handleAgencyPress = (agencyId) => {
+    console.log('Agency pressed:', agencyId);
+    // router.push(`/agency/${agencyId}`);
+  };
+
+  const handleFilterToggle = () => {
+    console.log('Filter toggle pressed');
+    setShowFilters(!showFilters);
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-[#0A1828]">
-      <StatusBar style="light" />
-      <View className="flex-1 justify-center items-center px-6">
-        <Feather name="search" size={64} color="#4A90E2" />
-        <Text className="text-white text-2xl font-bold mt-4">Search Page</Text>
-        <Text className="text-gray-400 text-center mt-2">
-          Search functionality will be implemented here
-        </Text>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="mt-6 bg-blue-500 px-6 py-3 rounded-lg"
-        >
-          <Text className="text-white font-semibold">Go Back</Text>
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView className="flex-1 bg-primary">
+      <SearchHeader
+        searchQuery={filters.q}
+        onSearchChange={handleSearchChange}
+      />
+
+      {showFilters ? (
+        <View className="flex-1">
+          <SearchFilters
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+          />
+
+          <View className="px-4 pb-6 flex-row  justify-center">
+            <TouchableOpacity
+              onPress={handleShowResults}
+              className="bg-[#B2CDDA] py-4 rounded-xl items-center w-1/3"
+              activeOpacity={0.9}
+            >
+              <Text className="text-black font-bold text-lg">Show Result</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <View className="flex-1">
+          {/* Filter button when showing results */}
+          <View className="flex-row justify-end px-4 py-3">
+            <TouchableOpacity
+              onPress={handleFilterToggle}
+              className="bg-gray-800 px-4 py-2 rounded-xl flex-row items-center"
+              activeOpacity={0.9}
+            >
+              <Text className="text-white font-semibold mr-2">Filters</Text>
+              <Text className="text-[#B2CDDA]">⚙️</Text>
+            </TouchableOpacity>
+          </View>
+
+          <SearchResults
+            trips={trips}
+            relevantAgencies={relevantAgencies}
+            loading={loading}
+            onTripPress={handleTripPress}
+            onAgencyPress={handleAgencyPress}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
 
-export default Search;
+export default SearchPage;

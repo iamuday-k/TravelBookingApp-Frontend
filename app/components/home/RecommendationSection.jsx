@@ -1,11 +1,13 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, Animated, Dimensions } from 'react-native';
+import  { useRef, useState } from 'react';
+import { View, Text,  Image, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 const CARD_WIDTH = 175;
 const CARD_MARGIN = 8;
 const SPACER = (screenWidth - CARD_WIDTH) / 2 - CARD_MARGIN;
+const router = useRouter();
 
 const RecommendedCard = ({ trip, index, scrollX, isScrolling }) => {
   const inputRange = [
@@ -34,6 +36,8 @@ const RecommendedCard = ({ trip, index, scrollX, isScrolling }) => {
 
   const handlePress = () => {
     console.log('Trip pressed:', trip.id);
+    router.push('/packages');
+
   };
 
   const handleWishlist = () => {
@@ -47,8 +51,9 @@ const RecommendedCard = ({ trip, index, scrollX, isScrolling }) => {
       style={{
         width: CARD_WIDTH,
         marginHorizontal: CARD_MARGIN,
-        // Add padding to prevent clipping of scaled content and shadow
+        // Add padding to prevent clipping of scaled content and shado
         paddingVertical: 20, // This gives space for scaling and shadow
+        
       }}
     >
       <Animated.View
