@@ -9,7 +9,13 @@ import searchReducer from './slices/searchSlice';
 import packagesReducer from './slices/packageSlice';
 import packageDetailsReducer from './slices/packageDetailsSlice';
 import itineraryReducer from './slices/itinerarySlice';
-import bookingReducer from './slices/bookingSlice';
+import bookingReducer from './slices/userBookingSlice';
+import agencyDashboardReducer from "./slices/agencyDashboardSlice";
+import agencyPackagesReducer from "./slices/agencyPackagesSlice";
+import agencyEarningsReducer from './slices/agencyEarningsSlice';
+import agencyBookingsReducer from './slices/agencyBookingSlice';
+import agencyProfileReducer from './slices/agencyProfileSlice';
+import agencyAuthReducer from './slices/agencyAuthSlice';
 
 
 const store = configureStore({
@@ -23,7 +29,13 @@ const store = configureStore({
     packages: packagesReducer,
     packageDetails: packageDetailsReducer,
     itinerary: itineraryReducer,
-    booking: bookingReducer
+    booking: bookingReducer,
+    agencyDashboard: agencyDashboardReducer,
+    agencyPackages: agencyPackagesReducer,
+    agencyEarnings: agencyEarningsReducer,
+    agencyBookings: agencyBookingsReducer,
+    agencyProfile: agencyProfileReducer,
+    agencyAuth: agencyAuthReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

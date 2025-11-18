@@ -1226,7 +1226,21 @@ export const packageDetailsAPI = {
       const customData = { ...mockPackageDetailsData };
       
       // Find package from main packages list
-      const mainPackage = mockPackagesData.packages.find(p => p.packageId === packageId);
+      let mainPackage = mockPackagesData.packages.find(p => p.packageId === packageId);
+
+      // If not found, try to find it in the trips list from the home page mock data
+      if (!mainPackage) {
+        const trip = mockData.trips.find(t => t.id === packageId);
+        if (trip) {
+          mainPackage = {
+            packageId: trip.id,
+            name: trip.title,
+            location: 'Mock Location', // Add a mock location
+            image: trip.image,
+          };
+        }
+      }
+      
       if (mainPackage) {
         customData.name = mainPackage.location || mainPackage.name;
         customData.location = mainPackage.location;
@@ -1377,3 +1391,365 @@ export const bookingAPI = {
     return response.data;
   }
 };
+
+
+
+
+// ################################################################################################################################################
+
+const mockAgencyDashboardData = {
+  stats: {
+    totalBookings: 120,
+    totalBookingsChange: 10,          // %
+    totalEarnings: 25000,             // $
+    totalEarningsChange: 15,          // %
+    activePackages: 15,
+    activePackagesChange: 5,          // %
+    rating: 4.8,
+    ratingChange: 2,                  // %
+    reviewsCount: 120,
+  },
+  samplePackages: [
+    {
+      id: "pkg1",
+      title: "Luxury Getaway",
+      nights: 4, days: 5,
+      image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400",
+    },
+    {
+      id: "pkg2",
+      title: "Adventure Trip",
+      nights: 6, days: 7,
+      image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400",
+    },
+    {
+      id: "pkg3",
+      title: "Relaxing Retreat",
+      nights: 2, days: 3,
+      image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400",
+    },
+  ],
+  latestBookings: [
+    { id: "bk1", title: "Luxury Getaway", bookingId: "12345", price: 2500, image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400"},
+    { id: "bk2", title: "Adventure Trip", bookingId: "67890", price: 3000, image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400" },
+    { id: "bk3", title: "Relaxing Retreat", bookingId: "11223", price: 1800, image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400" },
+  ],
+  interactions: {
+    newQueries: 2,
+    newReplies: 3,
+  },
+  ratingBreakdown: { 5: 100, 4: 50, 3: 30, 2: 10, 1: 5 }, // percentages shown in UI
+  monthlyBookingsChart: {
+    total: 120,
+    last6Months: [
+      { label: "Jan", value: 115 },
+      { label: "Feb", value: 118 },
+      { label: "Mar", value: 116 },
+      { label: "Apr", value: 119 },
+      { label: "May", value: 121 },
+      { label: "Jun", value: 120 },
+    ],
+  },
+};
+
+// ---------- API WRAPPER ----------
+export const agencyDashboardAPI = {
+  getDashboard: async (params = {}) => {
+    if (USE_MOCK_DATA) {
+      await new Promise((r) => setTimeout(r, 600));
+      return { success: true, data: mockAgencyDashboardData }; // 200 OK
+    }
+    try {
+      const res = await apiClient.get("/agency/dashboard", { params });
+      return res.data; // must be { success: true, data: {...} }
+    } catch (e) {
+      if (e?.response?.status === 403) {
+        return { error: "Forbidden", message: "Access denied." }; // 403
+      }
+      throw e;
+    }
+  },
+};
+
+
+
+// ##############################################################################################################################################################################
+
+const mockPackages = [
+  {
+    packageId: "pkg-1",
+    name: "Explore GOA",
+    startingPrice: 2500,
+    status: "active",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format",
+    createdAt: "2024-10-01T10:00:00Z",
+  },
+  {
+    packageId: "pkg-2",
+    name: "Explore GOA",
+    startingPrice: 2500,
+    status: "pending",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format",
+    createdAt: "2024-09-10T10:00:00Z",
+  },
+  {
+    packageId: "pkg-3",
+    name: "Explore GOA",
+    startingPrice: 2500,
+    status: "pending",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format",
+    createdAt: "2024-09-08T10:00:00Z",
+  },
+  {
+    packageId: "pkg-4",
+    name: "Explore GOA",
+    startingPrice: 2500,
+    status: "pending",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format",
+    createdAt: "2024-08-20T10:00:00Z",
+  },
+];
+
+export const agencyPackagesAPI = {
+  /**
+   * getList(params)
+   * params: { status?: 'active'|'pending', sort?: 'recent'|'priceAsc'|'priceDesc', page?: number }
+   * success -> { pagination: { total, page }, packages: [...] }
+   * error  -> { error: "Forbidden", message: "Access denied." }
+   */
+  getList: async (params = {}) => {
+    if (USE_MOCK_DATA) {
+      await new Promise((r) => setTimeout(r, 600));
+      let list = [...mockPackages];
+      if (params.status) list = list.filter((p) => p.status === params.status);
+      if (params.sort === "priceAsc") list.sort((a, b) => a.startingPrice - b.startingPrice);
+      if (params.sort === "priceDesc") list.sort((a, b) => b.startingPrice - a.startingPrice);
+      return { pagination: { total: list.length, page: params.page || 1 }, packages: list };
+    }
+
+    try {
+      const res = await apiClient.get("/agency/packages", { params });
+      return res.data; // expected { pagination, packages } or { error, message }
+    } catch (e) {
+      if (e?.response?.status === 403) return { error: "Forbidden", message: "Access denied." };
+      throw e;
+    }
+  },
+
+  delete: async (packageId) => {
+    if (USE_MOCK_DATA) {
+      await new Promise((r) => setTimeout(r, 300));
+      // simulate success
+      return { success: true };
+    }
+    return apiClient.delete(`/agency/packages/${packageId}`).then((r) => r.data);
+  },
+
+  createPackage: async (payload) => {
+    if (USE_MOCK_DATA) {
+      await new Promise((r) => setTimeout(r, 600));
+      const created = {
+        packageId: `pkg-${Math.random().toString(36).slice(2, 9)}`,
+        ...payload,
+        createdAt: new Date().toISOString(),
+      };
+      // optionally push into mockPackages (so subsequent fetch sees it)
+      mockPackages.unshift(created);
+      return { success: true, data: created };
+    }
+    const res = await apiClient.post("/agency/packages", payload);
+    return res.data;
+  },
+};
+
+
+
+// ##########################################################################################################################################################################
+const mockAgencyEarningsData = {
+  summary: {
+    total: 75000,
+    available: 75000,
+    pending: 75000,
+  },
+  graphData: [
+    { month: 'Jan 2025', value: 5000 },
+    { month: 'Feb 2025', value: 12000 },
+    { month: 'Mar 2025', value: 10 },
+    { month: 'Apr 2025', value: 50000 },
+  ],
+  payoutHistory: [
+    {
+      id: '1',
+      date: 'April 2025',
+      month: 'April 2025',
+      amount: 50000,
+      status: 'Successful',
+    },
+    {
+      id: '2',
+      date: 'May 2025',
+      month: 'May 2025',
+      amount: 25000,
+      status: 'Pending',
+    },
+    {
+      id: '3',
+      date: 'June 2025',
+      month: 'June 2025',
+      amount: 30000,
+      status: 'Successful',
+    },
+    {
+      id: '4',
+      date: 'July 2025',
+      month: 'July 2025',
+      amount: 15000,
+      status: 'Cancel',
+    },
+  ],
+};
+
+// Agency Earnings API
+export const agencyEarningsAPI = {
+  getEarnings: () => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (USE_MOCK_DATA) {
+          resolve(mockAgencyEarningsData);
+        } else {
+          // Real API call would go here
+          // fetch('/api/agency/earnings')
+          //   .then(res => res.json())
+          //   .then(data => resolve(data))
+          //   .catch(err => reject(err));
+          reject(new Error('Real API not implemented'));
+        }
+      }, 800);
+    });
+  },
+};
+
+
+// ##############################################################################################################################################################
+
+const mockAgencyBookingsData = {
+  stats: {
+    total: 156,
+    confirmed: 124,
+    pending: 18,
+  },
+  bookings: [
+    {
+      id: '1',
+      customerName: 'Priya Sharma',
+      phone: '+91 98765 43210',
+      package: 'Goa Beach Paradise - 5N/6D',
+      bookedDate: '15 Sep 2025',
+      travelDate: '5 Oct 2025',
+      paymentStatus: 'Paid',
+      bookingStatus: 'Confirmed',
+      badges: ['Paid', 'Confirmed'],
+    },
+    {
+      id: '2',
+      customerName: 'Rahul Verma',
+      phone: '+91 87654 32109',
+      package: 'Kerala Backwaters - 4N/5D',
+      bookedDate: '18 Sep 2025',
+      travelDate: '12 Oct 2025',
+      paymentStatus: 'Pending',
+      bookingStatus: 'Awaiting',
+      badges: ['Pending', 'Awaiting'],
+    },
+    {
+      id: '3',
+      customerName: 'Anjali Mehta',
+      phone: '+91 76543 21098',
+      package: 'Rajasthan Royal Tour - 7N/8D',
+      bookedDate: '20 Sep 2025',
+      travelDate: '1 Nov 2025',
+      paymentStatus: 'Refund',
+      bookingStatus: 'Cancelled',
+      badges: ['Refund'],
+    },
+    {
+      id: '4',
+      customerName: 'Vikram Singh',
+      phone: '+91 65432 10987',
+      package: 'Himachal Adventure - 6N/7D',
+      bookedDate: '22 Sep 2025',
+      travelDate: '15 Oct 2025',
+      paymentStatus: 'Paid',
+      bookingStatus: 'Confirmed',
+      badges: ['Paid', 'Confirmed'],
+    },
+    {
+      id: '5',
+      customerName: 'Sneha Patel',
+      phone: '+91 54321 09876',
+      package: 'Manali Honeymoon - 5N/6D',
+      bookedDate: '25 Sep 2025',
+      travelDate: '20 Oct 2025',
+      paymentStatus: 'Pending',
+      bookingStatus: 'Awaiting',
+      badges: ['Pending', 'Awaiting'],
+    },
+  ],
+};
+
+export const agencyBookingsAPI = {
+  getBookings: () => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (USE_MOCK_DATA) {
+          resolve(mockAgencyBookingsData);
+        } else {
+          reject(new Error('Real API not implemented'));
+        }
+      }, 800);
+    });
+  },
+};
+
+
+// ##################################################################################################################################################################################
+
+
+export const mockAgencyProfileData = {
+id: 'agency_123',
+name: 'Travel Agency',
+email: 'gvagencyname@gmail.com',
+phone: '+91 1234567890',
+address: '1234 Main St, City, Country',
+timezone: 'IST 5:30 PM',
+language: 'English',
+profilePicture:
+'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
+};
+
+
+export const agencyProfileAPI = {
+getProfile: () => {
+return new Promise((resolve, reject) => {
+if (USE_MOCK_DATA) {
+setTimeout(() => resolve(mockAgencyProfileData), 600);
+return;
+}
+
+
+// Real API call example (uncomment & adapt)
+// fetch(`${API_BASE_URL}/agency/profile`, { headers })
+// .then(res => res.json())
+// .then(data => resolve(data))
+// .catch(err => reject(err));
+
+
+reject(new Error('No real API implementation for agency profile'));
+});
+},
+};
+
+
+// ####################################################################################################################################################
+
+

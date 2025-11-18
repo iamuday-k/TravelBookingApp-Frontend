@@ -1,14 +1,13 @@
-import { StyleSheet } from "react-native";
-import React, { useEffect } from "react";
-import { SplashScreen, Stack } from "expo-router";
-import { useFonts } from 'expo-font'; 
+import { useEffect } from "react";
+import { Slot, SplashScreen } from "expo-router";
+import { useFonts } from "expo-font";
+import { Provider } from "react-redux";
 import store from "../store";
-import { Provider } from 'react-redux';
 import "./global.css";
 
 SplashScreen.preventAutoHideAsync();
 
-const RootLayout = () => {
+export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -24,29 +23,15 @@ const RootLayout = () => {
 
   useEffect(() => {
     if (error) throw error;
-
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
+    if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded, error]);
 
-  if (!fontsLoaded && !error) {
-    return null;
-  }
+  if (!fontsLoaded && !error) return null;
 
+  // Providers apply to both (user) and (agency)
   return (
     <Provider store={store}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" />
-      </Stack>
+      <Slot />
     </Provider>
   );
-};
-
-export default RootLayout;
+}

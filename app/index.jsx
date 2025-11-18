@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, ImageBackground, Dimensions, FlatList, Im
 import { images, icons } from '../constants';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import TextShadow from './components/textshadow';
+import TextShadow from './(user)/components/textshadow';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -63,7 +64,7 @@ export default function Index() {
   };
 
   const RenderItem = ({ item, index }) => {
-    if (item.isWelcomePage) {
+    if (item.isWelcomePage ) {
       // Render the Welcome page as the 4th item
       return (
         <View style={{ width }}>
@@ -96,7 +97,7 @@ export default function Index() {
                   <TouchableOpacity
                     className="bg-[#1a2332] rounded-full py-5 px-6 flex-row items-center justify-center relative"
                     activeOpacity={0.8}
-                    onPress={() => router.push('/(auth)/sign-in')}
+                    onPress={() => router.push('/(user)/signin')}
                   >
                     <Text className="text-white font-psemibold text-lg">
                       I'm a Traveller
@@ -107,7 +108,7 @@ export default function Index() {
                   <TouchableOpacity
                     className="bg-white rounded-full py-5 px-6 flex-row items-center justify-center relative mar my-6"
                     activeOpacity={0.8}
-                    onPress={() => router.push('/(auth)/sign-in')}
+                    onPress={() => router.push('/(agency)/signin')}
                   >
                        
                     <Text className="text-black font-psemibold text-lg">

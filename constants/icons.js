@@ -11,8 +11,14 @@ import share from "../assets/icons/share.png";
 import start_arrow from "../assets/icons/start-arrow.png";
 import trips from "../assets/icons/trips.png";
 import wishlist from "../assets/icons/wishlist.png";
+import packages from "../assets/icons/packages.png";
+import message from "../assets/icons/message.png";
+import earnings from "../assets/icons/earnings.png";
 
 export default {
+  packages,
+  message,
+  earnings,
   eyeclose,
   home,
   eyeopen,
