@@ -35,7 +35,7 @@ const BookingConfirmationPage = () => {
             <TouchableOpacity
               onPress={() => {
                 console.log('✕ Close pressed');
-                router.push('/(tabs)/home');
+                router.replace('/(tabs)/home');
               }}
               className="w-10 h-10 items-center justify-center"
             >
